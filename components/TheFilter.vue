@@ -1,12 +1,12 @@
 <template>
-  <div class="">
+  <section class="the-filter">
 
-  </div>
+  </section>
 </template>
 
 <script>
 export default {
-  name: "Category"
+name: "TheFilter"
 }
 </script>
 

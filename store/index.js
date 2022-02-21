@@ -1,23 +1,25 @@
-import config from '../config'
+import qs from 'qs'
 
 export const state = () => ({
-  categories: []
+  catalog: [],
 })
 
 export const mutations = {
-  setCategory(state, value) {
-    state.categories = value
-  },
-  setTags(state, value) {
-    state.tags = value
-  },
+  setCatalog(state, value) {
+    state.catalog = value
+  }
 }
 
 export const actions = {
   async nuxtServerInit ({ commit }) {
-    let categories = await this.$axios(config.api + '/categories?fields[0]=title&fields[1]=slug')
-    let tags = await this.$axios(config.api + '/tags?fields[0]=title&fields[1]=slug')
-    commit('setCategory', categories.data.data)
-    commit('setTags', tags.data.data)
+    let query = qs.stringify({
+      fields: ['title', 'slug', 'order'],
+      sort: ['order']
+    }, { encodeValuesOnly: true })
+    let [categories, tags] = await Promise.all([
+      this.$axios.$get(`/categories?${query}`),
+      this.$axios.$get(`/tags?${query}`)
+    ])
+    commit('setCatalog', [].concat(tags.data, categories.data))
   }
 }

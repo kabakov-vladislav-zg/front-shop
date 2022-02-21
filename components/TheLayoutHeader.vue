@@ -24,22 +24,11 @@
         >
           <ul class="the-layout-header__categories navbar-nav border-bottom">
             <li
-              v-for="tag in tags"
-              :key="tag.id"
+              v-for="category in catalog"
+              :key="category.attributes.slug"
             >
               <nuxt-link
-                :to="tag.attributes.slug"
-                class="nav-link"
-              >
-                {{tag.attributes.title}}
-              </nuxt-link>
-            </li>
-            <li
-              v-for="category in categories"
-              :key="category.id"
-            >
-              <nuxt-link
-                :to="category.attributes.slug"
+                :to="'/catalog/' + category.attributes.slug"
                 class="nav-link"
               >
                 {{category.attributes.title}}
@@ -89,11 +78,8 @@ export default {
   },
 
   computed: {
-    categories() {
-      return this.$store.state.categories
-    },
-    tags() {
-      return this.$store.state.tags
+    catalog() {
+      return this.$store.state.catalog
     }
   }
 }
