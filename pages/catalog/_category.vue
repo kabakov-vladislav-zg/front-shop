@@ -1,19 +1,21 @@
 <template>
-  <section class="category">
+  <main class="category">
     <div
       v-for="product in products"
       :key="product.attributes.slug"
-      class=""
+      class="card w-50"
     >
-      {{ product.attributes.slug }}
+      <div class="card-body">
+        {{ product.attributes.slug }}
+      </div>
     </div>
-  </section>
+  </main>
 </template>
 
 <script>
 export default {
   name: "Category",
-
+  components: {},
   data() {
     return {
       products: []
@@ -40,6 +42,8 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+.category {
+  height: 300vh;
+}
 </style>
