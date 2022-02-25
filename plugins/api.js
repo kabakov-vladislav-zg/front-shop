@@ -15,6 +15,35 @@ class Api {
     }
     return JSON.parse(JSON.stringify(this._store.state.cache.requests[request]))
   }
+
+  async getProducts(category, page) {
+    return this.get('products', {
+      filters: {
+        category: {
+          slug: {
+            $eq: category
+          }
+        }
+      },
+      fields: ['title, slug, description, price'],
+      populate: ['img'],
+      pagination: {
+        pageSize: 12,
+        page: page,
+      },
+    })
+  }
+  async getCategory(category) {
+    return this.get('categories', {
+      filters: {
+        slug: {
+          $eq: category
+        }
+      },
+      fields: ['title, description'],
+      populate: ['placeholder'],
+    })
+  }
 }
 
 export default ({ app: { $axios, store } }, inject) => {
