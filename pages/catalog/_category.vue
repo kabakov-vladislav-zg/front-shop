@@ -1,10 +1,10 @@
 <template>
-  <InfiniteFeed
+  <FeedContainer
     class="category"
     @top="setStart"
     @bottom="setEnd"
   >
-    <InfiniteFeedPage
+    <FeedContainerPage
       v-for="(page, index) in pages"
       :key="page.meta.pagination.page"
       :top="(index === 0) && (pages.length > 1)"
@@ -24,17 +24,17 @@
           :price="product.attributes.price"
         />
       </div>
-    </InfiniteFeedPage>
-  </InfiniteFeed>
+    </FeedContainerPage>
+  </FeedContainer>
 </template>
 
 <script>
 import CardProduct from "../../components/CardProduct"
-import InfiniteFeed from "../../components/InfiniteFeed";
-import InfiniteFeedPage from "../../components/InfiniteFeedPage";
+import FeedContainer from "../../components/FeedContainer";
+import FeedContainerPage from "../../components/FeedContainerPage";
 export default {
   name: "Category",
-  components: {InfiniteFeedPage, InfiniteFeed, CardProduct},
+  components: {FeedContainerPage, FeedContainer, CardProduct},
 
   async asyncData({ $api, params, query }) {
     let page = Number(query.page || 1)

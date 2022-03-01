@@ -1,9 +1,15 @@
 export const state = () => ({
-  top: true,
-  up: true,
+  top: false,
+  up: false,
   from: 0,
   to: 0
 })
+
+export const getters = {
+  isToTop(state) {
+    return state.up || state.top
+  }
+}
 
 export const mutations = {
   setTop(state, value) {

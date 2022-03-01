@@ -1,7 +1,7 @@
 <template>
   <div
     ref="page"
-    class="infinite-feed-page"
+    class="page"
   >
     <slot></slot>
   </div>
@@ -9,7 +9,7 @@
 
 <script>
 export default {
-  name: "InfiniteFeedPage",
+  name: "FeedContainerPage",
 
   props: {
     top: {
@@ -47,7 +47,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-
-</style>

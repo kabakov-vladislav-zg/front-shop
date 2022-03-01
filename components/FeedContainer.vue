@@ -1,5 +1,5 @@
 <template>
-  <main class="infinite-feed container-fluid">
+  <main class="feed-container container-fluid">
     <div ref="top"></div>
     <slot></slot>
     <div ref="bottom"></div>
@@ -8,7 +8,7 @@
 
 <script>
 export default {
-  name: "InfiniteFeed",
+  name: "FeedContainer",
 
   mounted() {
     let top = new IntersectionObserver((e) => {
@@ -25,9 +25,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-.infinite-feed {
-
-}
-</style>
