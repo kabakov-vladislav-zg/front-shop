@@ -1,5 +1,5 @@
 <template>
-  <header class="the-header navbar navbar-dark bg-dark p-0">
+  <header class="header-main navbar navbar-dark bg-dark p-0">
     <div class="container-fluid">
       <nuxt-link class="navbar-brand" to="/">Shop</nuxt-link>
 
@@ -58,7 +58,7 @@
 import {mapActions, mapGetters} from "vuex";
 
 export default {
-  name: "TheHeader",
+  name: "HeaderMain",
   components: {},
 
   data() {
@@ -101,7 +101,7 @@ export default {
 </script>
 
 <style>
-.the-header {
+.header-main {
   display: block;
 }
 </style>

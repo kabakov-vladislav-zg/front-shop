@@ -4,7 +4,7 @@
     :style="root"
   >
     <transition name="layout__header_transition">
-      <TheHeader
+      <HeaderMain
         class="layout__header"
         v-show="isToTop || isDesktop"
       />
@@ -21,9 +21,9 @@
       <Nuxt />
     </div>
 
-    <TheBackdrop v-if="isToolsOpen" />
+    <ModalBackdrop v-if="isToolsOpen" />
     <transition>
-      <TheModal v-show="isToolsOpen" />
+      <ModalContainer v-show="isToolsOpen" />
     </transition>
   </div>
 </template>
@@ -32,15 +32,15 @@
 import { mapGetters } from 'vuex';
 
 import FeedToolbar from "../components/FeedToolbar";
-import TheHeader from "../components/TheHeader";
-import TheBackdrop from "../components/TheBackdrop";
-import TheModal from "../components/TheModal";
+import HeaderMain from "../components/HeaderMain";
+import ModalBackdrop from "../components/ModalBackdrop";
+import ModalContainer from "../components/ModalContainer";
 export default {
   name: "default",
   components: {
-    TheModal,
-    TheBackdrop,
-    TheHeader,
+    ModalContainer,
+    ModalBackdrop,
+    HeaderMain,
     FeedToolbar,
   },
 

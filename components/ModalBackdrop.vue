@@ -1,6 +1,6 @@
 <template>
   <div
-    class="the-backdrop show modal-backdrop"
+    class="show modal-backdrop"
     @click="closeTool"
   ></div>
 </template>
@@ -9,7 +9,7 @@
 import {mapActions} from "vuex";
 
 export default {
-  name: "TheBackdrop",
+  name: "ModalBackdrop",
 
   methods: {
     ...mapActions({

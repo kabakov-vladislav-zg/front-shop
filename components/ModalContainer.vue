@@ -1,5 +1,5 @@
 <template>
-  <div class="the-modal bg-dark">
+  <div class="modal-container bg-dark">
     <div class="container-fluid">
       <component
         :is="component"
@@ -13,7 +13,7 @@
 import {mapActions, mapGetters} from "vuex";
 
 export default {
-  name: "TheModal",
+  name: "ModalContainer",
 
   computed: {
     ...mapGetters({
@@ -35,7 +35,7 @@ export default {
 </script>
 
 <style lang="scss">
-.the-modal {
+.modal-container {
   position: fixed;
   z-index: $zindex-modal;
   top: 0;
