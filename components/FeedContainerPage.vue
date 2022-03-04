@@ -1,7 +1,7 @@
 <template>
   <div
     ref="page"
-    class="page"
+    class="page row row-cols-3 g-3"
   >
     <slot></slot>
   </div>
@@ -14,6 +14,10 @@ export default {
   props: {
     top: {
       type: Boolean,
+      required: true
+    },
+    page: {
+      type: Number,
       required: true
     }
   },
@@ -28,22 +32,13 @@ export default {
     this.position = window.pageYOffset
   },
   mounted() {
+    this.$refs.page.page = this.page
     this.$nextTick(() =>{
+      this.$emit('init', this.$refs.page)
       if (this.top && (this.position === window.pageYOffset)) {
         window.scrollBy(0, this.$refs.page.getBoundingClientRect().height)
       }
     })
-  },
-
-  beforeDestroy() {
-    this.position = window.pageYOffset
-  },
-  destroyed() {
-    this.$nextTick(() =>{
-      if (this.top && (this.position === window.pageYOffset)) {
-        window.scrollBy(0, -this.$refs.page.getBoundingClientRect().height)
-      }
-    })
-  },
+  }
 }
 </script>

@@ -7,8 +7,9 @@
     <FeedContainerPage
       v-for="(page, index) in pages"
       :key="page.meta.pagination.page"
+      :page="page.meta.pagination.page"
       :top="(index === 0) && (pages.length > 1)"
-      class="row row-cols-3 g-3"
+      @init="observe"
     >
       <div
         v-for="product in page.data"
@@ -36,7 +37,7 @@ export default {
   name: "Category",
   components: {FeedContainerPage, FeedContainer, CardProduct},
 
-  async asyncData({ $api, params, query }) {
+  async asyncData({ $api, params, query, store }) {
     let page = Number(query.page || 1)
     let route = params.category
     let [category, products] = await Promise.all([
@@ -48,6 +49,11 @@ export default {
     let placeholder = category.data[0].attributes.placeholder.data.attributes
 
     let pageCount = products.meta.pagination.pageCount
+
+    store.commit('feed/setFilter', {
+      path: params.category,
+      pageCount: pageCount
+    })
 
     console.log(products)
     console.log(category)
@@ -63,13 +69,65 @@ export default {
     }
   },
 
+  computed: {
+    currentFilter() {
+      return this.$store.state.feed.currentFilter
+    }
+  },
+
+  watch: {
+    currentFilter: {
+      async handler({ page }) {
+        let products = await this.$api.getProducts(this.route, page)
+
+        let query = {}
+        if (page > 1) {
+          query.page = page
+        }
+
+        this.pages = [ products ]
+        this.start = page
+        this.end = page
+        this.$router.replace({ query })
+        window.scrollTo(0,0)
+
+        await this.setStart()
+      }
+    }
+  },
+
+  data() {
+    return {
+      pageObserver: null
+    }
+  },
+
   methods: {
+    observe(elem) {
+      if (!this.pageObserver) {
+        this.pageObserver = new IntersectionObserver(this.setCurrentPage.bind(this))
+      }
+      this.pageObserver.observe(elem)
+    },
+
+    setCurrentPage(e) {
+      if(e[0].isIntersecting) {
+        let query = {}
+        let page = e[0].target.page
+        if(page > 1) {
+          query.page = page
+        }
+        this.$router.replace({ query })
+      }
+    },
+
     async setStart() {
       if (this.start <= 1) return
       this.start -= 1
       let products = await this.$api.getProducts(this.route, this.start)
       this.pages.unshift(products)
     },
+
     async setEnd() {
       if (this.end >= this.pageCount) return
       this.end += 1
