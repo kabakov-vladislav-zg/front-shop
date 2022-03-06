@@ -16,8 +16,8 @@ class Api {
     return JSON.parse(JSON.stringify(this._store.state.cache.requests[request]))
   }
 
-  async getProducts(category, page) {
-    return this.get('products', {
+  async getProducts(category, page, filters) {
+    let query = {
       filters: {
         category: {
           slug: {
@@ -25,13 +25,28 @@ class Api {
           }
         }
       },
-      fields: ['title, slug, description, price'],
-      populate: ['img'],
+      fields: ['title, slug, description, price', 'sale'],
+      populate: ['picture'],
       pagination: {
         pageSize: 12,
         page: page,
       },
-    })
+    }
+
+    if (filters) {
+      filters = JSON.parse(filters)
+
+      let characteristics = {}
+
+      for (const filter in filters) {
+        characteristics[filter] = {}
+        characteristics[filter].$eq = filters[filter]
+      }
+
+      query.filters.characteristics = characteristics
+    }
+
+    return this.get('products', query)
   }
   async getCategory(category) {
     return this.get('categories', {
@@ -40,7 +55,7 @@ class Api {
           $eq: category
         }
       },
-      fields: ['title, description'],
+      fields: ['title, description', 'settings'],
       populate: ['placeholder'],
     })
   }

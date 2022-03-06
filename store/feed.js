@@ -1,13 +1,20 @@
 export const state = () => ({
-  filter: {},
-  currentFilter: {}
+  filters: null,
+
+  pageCount: null,
+
+  currentFilters: null
 })
 
 export const mutations = {
-  setFilter(state, value) {
-    state.filter = value
+  setFilters(state, value) {
+    state.filters = value
   },
-  setCurrentFilter(state, value) {
-    state.currentFilter = value
+  setPageCount(state, value) {
+    state.pageCount = value
+  },
+  setCurrentFilters(state, value) {
+    console.log(value)
+    state.currentFilters = value
   }
 }

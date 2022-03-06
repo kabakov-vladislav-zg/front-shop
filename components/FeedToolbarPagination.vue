@@ -27,21 +27,25 @@ export default {
       return Number(this.$route.query.page) || 1
     },
     path() {
-      return this.$store.state.feed.filter.path
+      return this.$route.path
+    },
+    filters() {
+      return this.$route.query.filters
     },
     pageCount() {
-      return this.$store.state.feed.filter.pageCount
+      return this.$store.state.feed.pageCount
     }
   },
 
   methods: {
     setPage(page) {
-      this.$store.commit('feed/setCurrentFilter', {
-        page
+      this.$store.commit('feed/setCurrentFilters', {
+        page,
+        filters: this.filters
       })
     },
     getHref(page) {
-      return this.path + (page > 1 ? '?page=' + page : '')
+      return this.path + (page > 1 ? '?page=' + page : '') + (this.filters ? '&filters=' + this.filters : '')
     }
   }
 }

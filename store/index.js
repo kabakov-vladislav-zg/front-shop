@@ -40,13 +40,10 @@ export const actions = {
 
   async nuxtServerInit ({ commit }) {
     let query = qs.stringify({
-      fields: ['title', 'slug', 'order'],
-      sort: ['order']
+      fields: ['title', 'slug'],
     }, { encodeValuesOnly: true })
-    let [categories, tags] = await Promise.all([
-      this.$axios.$get(`/categories?${query}`),
-      this.$axios.$get(`/tags?${query}`)
-    ])
-    commit('setCatalog', [].concat(tags.data, categories.data))
+    let catalog = await this.$axios.$get(`/categories?${query}`)
+
+    commit('setCatalog', catalog.data)
   }
 }

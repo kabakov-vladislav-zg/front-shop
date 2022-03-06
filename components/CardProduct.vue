@@ -2,8 +2,8 @@
   <div class="card-product card">
     <div class="card-product__img-container card-img-top">
       <img
-        v-if="img"
-        :src="'http://localhost:1337' + img.url"
+        v-if="picture"
+        :src="'http://localhost:1337' + picture.url"
         class="card-product__img"
         alt=""
       >
@@ -34,7 +34,7 @@ export default {
       type: String,
       required: true
     },
-    img: {
+    picture: {
       type: Object,
       required: true
     },
