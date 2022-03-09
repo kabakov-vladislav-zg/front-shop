@@ -27,7 +27,6 @@
           ></label>
         </template>
       </div>
-
       <div
         v-else
         class="btn-group"
@@ -44,7 +43,7 @@
       </div>
     </div>
     <div
-      v-if="isDesktop"
+      v-show="isDesktop"
       class="container-fluid"
     >
       <keep-alive>

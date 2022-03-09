@@ -1,96 +1,50 @@
 <template>
-  <div class="menu-filter">
+  <div
+    class="menu-filter"
+    @input="setFilters"
+  >
     <h2 class="text-light">Фильтры</h2>
-    <span class="text-light">
-    {{currentFilters}}
-    </span>
-    <div
-      v-for="(filter, nameFilter) in filters"
-      :key="filter.title"
-    >
-      <h3 class="text-light">
-        {{ filter.title }}
-      </h3>
-      <select
-        class="form-select"
-        aria-label="Default select example"
-        v-model="currentFilters[nameFilter]"
-      >
-        <option
-          v-for="(option, nameOption) in filter.value"
-          :value="nameOption"
-        >
-          {{ option }}
-        </option>
-      </select>
-    </div>
-    <button
-      @click="setFilters"
-      class="btn btn-dark"
-    >
-      Применить
-    </button>
+
+    <div class="text-light">Найдено товаров: {{count}}</div>
+
+    <MenuFilterQualities
+      v-model="qualities"
+    />
   </div>
 </template>
 
 <script>
+import MenuFilterQualities from "./MenuFilterQualities";
 export default {
   name: "MenuFilter",
-
+  components: {MenuFilterQualities},
   data() {
     return {
-      currentFilters: null
+      count: 0,
+
+      qualities: null
     }
   },
 
   methods: {
-    setFilters() {
-      this.$emit('close')
-
-      let currentFilters = {}
-      for (const filter in this.currentFilters) {
-        if(this.currentFilters[filter] !== 'null') {
-          currentFilters[filter] = this.currentFilters[filter]
-        }
-      }
-
-      if(Object.keys(currentFilters).length) {
-        currentFilters = JSON.stringify(currentFilters)
-      } else {
-        currentFilters = null
-      }
-
-      this.$store.commit('feed/setCurrentFilters', {
-        page: 1,
-        filters: currentFilters
+    async setFilters() {
+      let products = await this.$api.getProductsMeta({
+        category: this.$route.params.category,
+        qualities: this.qualities
       })
+      this.count = products.meta.pagination.total
     }
   },
 
-  computed: {
-    filters() {
-      return this.$store.state.feed.filters
-    }
-  },
+  created() {
+    let { qualities } = this.$route.query
+    this.qualities = JSON.parse(qualities || '{}')
 
-  watch: {
-    '$route.query.filters': {
-      immediate: true,
-      handler(filters = '{}') {
-        let currentFilters = {}
-        for (const filter of Object.keys(this.filters)) {
-          currentFilters[filter] = 'null'
-        }
-
-        Object.assign(currentFilters, JSON.parse(filters))
-
-        this.currentFilters = currentFilters
-      }
-    }
+    this.setFilters()
   }
 }
 </script>
 
-<style scoped>
+<style>
 
 </style>

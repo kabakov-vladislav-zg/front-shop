@@ -23,7 +23,7 @@
 
     <ModalBackdrop v-if="isToolsOpen" />
     <transition>
-      <ModalContainer v-show="isToolsOpen" />
+      <ModalContainer v-if="isToolsOpen" />
     </transition>
   </div>
 </template>

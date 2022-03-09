@@ -39,28 +39,38 @@ export default {
 
   async asyncData({ $api, params, query, store }) {
     let page = Number(query.page || 1)
-    let filters = query.filters
+    let qualities = query.qualities ? JSON.parse(query.qualities) : null
     let url = params.category
+    if (query.sort) {
+      store.commit('feed/setCurrent', { key: 'sort', value: query.sort })
+    }
+    let sort = store.state.feed.current.sort
 
     let [category, products] = await Promise.all([
       $api.getCategory(url),
-      $api.getProducts(url, page, filters)
+      $api.getProducts({
+        category: url,
+        page,
+        qualities,
+        sort
+      })
     ])
 
     let description = category.data[0].attributes.description
     let placeholder = category.data[0].attributes.placeholder.data.attributes
 
     let pageCount = products.meta.pagination.pageCount
-    let settings = category.data[0].attributes.settings
+    let allQualities = category.data[0].attributes.qualities
 
     store.commit('feed/setPageCount', pageCount)
-    store.commit('feed/setFilters', settings)
+    store.commit('feed/setQualities', allQualities)
 
     console.log(products)
     console.log(category)
     return {
       url,
-      filters,
+      qualities,
+      sort,
       description,
       placeholder,
       pages: [ products ],
@@ -71,40 +81,61 @@ export default {
     }
   },
 
-  computed: {
-    currentFilters() {
-      return this.$store.state.feed.currentFilters
-    }
-  },
-
-  watch: {
-    currentFilters: {
-      async handler({ page, filters }) {
-        let products = await this.$api.getProducts(this.url, page, filters)
-
-        let pageCount = products.meta.pagination.pageCount
-        this.$store.commit('feed/setPageCount', pageCount)
-
-        this.start = page
-        this.end = page
-
-        window.scrollTo(0,0)
-        this.setHistory({ page, filters })
-
-        this.pages = [products]
-
-        await this.setStart()
-      }
-    }
-  },
-
   data() {
     return {
       pageObserver: null
     }
   },
 
+  computed: {
+    currentFilters() {
+      return this.$store.state.feed.current.filters
+    },
+    currentPage() {
+      return this.$store.state.feed.current.page
+    },
+    currentSort() {
+      return this.$store.state.feed.current.sort
+    }
+  },
+
+  watch: {
+    currentSort(sort) {
+      this.update({ sort })
+    },
+    currentPage(page) {
+      if(!page) return
+      this.$store.commit('feed/setCurrent', {
+        key: 'page',
+        value: null
+      })
+
+      this.update({ page })
+    },
+    currentFilters(qualities) {
+      this.update({ qualities })
+    }
+  },
+
   methods: {
+    async update({ category = this.url, qualities = this.qualities, page = 1, sort = this.sort }) {
+      let products = await this.$api.getProducts({ category, page, qualities, sort })
+
+      this.pageCount = products.meta.pagination.pageCount
+      this.$store.commit('feed/setPageCount', this.pageCount)
+
+      this.qualities = qualities
+      this.page = this.start = this.end = page
+      this.sort = sort
+      this.pages = [ products ]
+
+      this.setHistory({ page, qualities, sort })
+
+      window.scrollTo(0,0)
+
+      this.setStart()
+    },
+
     observe(elem) {
       if (!this.pageObserver) {
         this.pageObserver = new IntersectionObserver(this.setCurrentPage.bind(this))
@@ -116,23 +147,33 @@ export default {
       if(e[0].isIntersecting) {
         let page = e[0].target.page
 
-        this.setHistory({ page, filters: this.filters })
+        this.setHistory({ page })
+        this.page = page
       }
     },
 
-    setHistory({ page, filters }) {
-      if (filters === this.$route.query.filters && page === this.$route.query.page) return
+    setHistory({ page = 1, qualities = this.qualities, sort = this.sort }) {
+      let currentQualities
+      if (qualities) currentQualities = JSON.stringify(qualities)
+
+      if (
+        currentQualities === this.$route.query.qualities
+        && page === (Number(this.$route.query.page) || 1)
+        && sort === (this.$route.query.sort || 'updatedAt:desc')
+      ) return
 
       let query = {}
 
-      this.page = page
       if(page > 1) {
         query.page = page
       }
 
-      this.filters = filters
-      if(this.filters) {
-        query.filters = filters
+      if(currentQualities) {
+        query.qualities = currentQualities
+      }
+
+      if(sort !== 'updatedAt:desc') {
+        query.sort = sort
       }
 
       this.$router.replace({ query })
@@ -141,14 +182,24 @@ export default {
     async setStart() {
       if (this.start <= 1) return
       this.start -= 1
-      let products = await this.$api.getProducts(this.url, this.start, this.filters)
+      let products = await this.$api.getProducts({
+        category: this.url,
+        page: this.start,
+        qualities: this.qualities,
+        sort: this.sort
+      })
       this.pages.unshift(products)
     },
 
     async setEnd() {
       if (this.end >= this.pageCount) return
       this.end += 1
-      let products = await this.$api.getProducts(this.url, this.end, this.filters)
+      let products = await this.$api.getProducts({
+        category: this.url,
+        page: this.end,
+        qualities: this.qualities,
+        sort: this.sort
+      })
       this.pages.push(products)
     }
   }

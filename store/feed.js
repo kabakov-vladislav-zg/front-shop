@@ -1,20 +1,24 @@
 export const state = () => ({
-  filters: null,
+  qualities: null,
 
   pageCount: null,
 
-  currentFilters: null
+  currentFilters: null,
+  current: {
+    filters: null,
+    page: null,
+    sort: 'updatedAt:desc'
+  }
 })
 
 export const mutations = {
-  setFilters(state, value) {
-    state.filters = value
+  setQualities(state, value) {
+    state.qualities = value
   },
   setPageCount(state, value) {
     state.pageCount = value
   },
-  setCurrentFilters(state, value) {
-    console.log(value)
-    state.currentFilters = value
+  setCurrent(state, { key, value }) {
+    state.current[key] = value
   }
 }

@@ -1,19 +1,30 @@
 <template>
-  <label
-    class="selector-sort"
-  >
-    Сортировать по
-    <select class="selector-sort__select">
-      <option>времени</option>
-      <option>цене</option>
-      <option>популярности</option>
+  <label class="selector-sort">
+    <select
+      v-model="sort"
+      class="selector-sort__select"
+    >
+      <option :value="'updatedAt:desc'">новое поступление</option>
+      <option :value="'price:desc'">цена по убыванию</option>
+      <option :value="'price'">цена по возрастанию</option>
     </select>
   </label>
 </template>
 
 <script>
 export default {
-name: "FeedToolbarSelectorSort"
+  name: "FeedToolbarSelectorSort",
+
+  computed: {
+    sort: {
+      get() {
+        return this.$store.state.feed.current.sort
+      },
+      set(value) {
+        this.$store.commit('feed/setCurrent', { key: 'sort', value })
+      }
+    }
+  }
 }
 </script>
 

@@ -39,9 +39,9 @@ export default {
 
   methods: {
     setPage(page) {
-      this.$store.commit('feed/setCurrentFilters', {
-        page,
-        filters: this.filters
+      this.$store.commit('feed/setCurrent', {
+        key: 'page',
+        value: page
       })
     },
     getHref(page) {
