@@ -38,37 +38,35 @@ export default {
   components: {FeedContainerPage, FeedContainer, CardProduct},
 
   async asyncData({ $api, params, query, store }) {
-    let page = Number(query.page || 1)
+    let page = Number(query.page) || 1
     let qualities = query.qualities ? JSON.parse(query.qualities) : null
-    let url = params.category
+    let category = params.category
     if (query.sort) {
       store.commit('feed/setCurrent', { key: 'sort', value: query.sort })
     }
     let sort = store.state.feed.current.sort
 
-    let [category, products] = await Promise.all([
-      $api.getCategory(url),
+    let [categories, products] = await Promise.all([
+      $api.getCategory(category),
       $api.getProducts({
-        category: url,
+        category,
         page,
         qualities,
         sort
       })
     ])
 
-    let description = category.data[0].attributes.description
-    let placeholder = category.data[0].attributes.placeholder.data.attributes
+    let description = categories.data[0].attributes.description
+    let placeholder = categories.data[0].attributes.placeholder.data.attributes
 
     let pageCount = products.meta.pagination.pageCount
-    let allQualities = category.data[0].attributes.qualities
+    let allQualities = categories.data[0].attributes.qualities
 
     store.commit('feed/setPageCount', pageCount)
     store.commit('feed/setQualities', allQualities)
 
-    console.log(products)
-    console.log(category)
     return {
-      url,
+      category,
       qualities,
       sort,
       description,
@@ -118,7 +116,7 @@ export default {
   },
 
   methods: {
-    async update({ category = this.url, qualities = this.qualities, page = 1, sort = this.sort }) {
+    async update({ category = this.category, qualities = this.qualities, page = 1, sort = this.sort }) {
       let products = await this.$api.getProducts({ category, page, qualities, sort })
 
       this.pageCount = products.meta.pagination.pageCount
@@ -153,28 +151,19 @@ export default {
     },
 
     setHistory({ page = 1, qualities = this.qualities, sort = this.sort }) {
-      let currentQualities
-      if (qualities) currentQualities = JSON.stringify(qualities)
+      if (qualities) qualities = JSON.stringify(qualities)
+      let current = this.$route.query
 
       if (
-        currentQualities === this.$route.query.qualities
-        && page === (Number(this.$route.query.page) || 1)
-        && sort === (this.$route.query.sort || 'updatedAt:desc')
+        qualities === (current.qualities || null)
+        && page === (Number(current.page) || 1)
+        && sort === (current.sort || 'updatedAt:desc')
       ) return
 
       let query = {}
-
-      if(page > 1) {
-        query.page = page
-      }
-
-      if(currentQualities) {
-        query.qualities = currentQualities
-      }
-
-      if(sort !== 'updatedAt:desc') {
-        query.sort = sort
-      }
+      if(page > 1) query.page = page
+      if(qualities) query.qualities = qualities
+      if(sort !== 'updatedAt:desc') query.sort = sort
 
       this.$router.replace({ query })
     },
@@ -183,7 +172,7 @@ export default {
       if (this.start <= 1) return
       this.start -= 1
       let products = await this.$api.getProducts({
-        category: this.url,
+        category: this.category,
         page: this.start,
         qualities: this.qualities,
         sort: this.sort
@@ -195,7 +184,7 @@ export default {
       if (this.end >= this.pageCount) return
       this.end += 1
       let products = await this.$api.getProducts({
-        category: this.url,
+        category: this.category,
         page: this.end,
         qualities: this.qualities,
         sort: this.sort

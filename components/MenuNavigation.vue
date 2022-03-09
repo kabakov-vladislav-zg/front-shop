@@ -57,7 +57,6 @@ export default {
 
   methods: {
     onclick(e) {
-      console.log(e.target.classList)
       if(e.target.classList.contains('nav-link')) {
         this.$emit('close')
       }
@@ -65,7 +64,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

@@ -13,7 +13,7 @@
     <transition name="layout__feed-toolbar_transition">
       <FeedToolbar
         class="layout__feed-toolbar"
-        v-show="(isCatalog || isBlog) && isToTop"
+        v-show="(isCatalog || isBlog) && (isToTop || isDesktop)"
       />
     </transition>
 

@@ -19,6 +19,8 @@ export const mutations = {
     state.pageCount = value
   },
   setCurrent(state, { key, value }) {
+    console.log(window)
+    console.log(this)
     state.current[key] = value
   }
 }
