@@ -18,10 +18,10 @@ export default {
   computed: {
     sort: {
       get() {
-        return this.$store.state.feed.current.sort
+        return this.$store.state.feed.sort
       },
       set(value) {
-        this.$store.commit('feed/setCurrent', { key: 'sort', value })
+        this.$store.dispatch('feed/update', { key: 'sort', value })
       }
     }
   }

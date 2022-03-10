@@ -34,7 +34,7 @@ export default {
   mounted() {
     this.$refs.page.page = this.page
     this.$nextTick(() =>{
-      this.$emit('init', this.$refs.page)
+      this.$store.dispatch('feed/observe', this.$refs.page)
       if (this.top && (this.position === window.pageYOffset)) {
         window.scrollBy(0, this.$refs.page.getBoundingClientRect().height)
       }

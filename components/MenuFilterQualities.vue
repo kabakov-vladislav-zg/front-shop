@@ -47,7 +47,7 @@ export default {
       return this.value
     },
     allQualities() {
-      return this.$store.state.feed.qualities
+      return this.$store.state.feed.allQualities
     }
   }
 }

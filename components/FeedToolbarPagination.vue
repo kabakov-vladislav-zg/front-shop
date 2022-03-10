@@ -39,10 +39,7 @@ export default {
 
   methods: {
     setPage(page) {
-      this.$store.commit('feed/setCurrent', {
-        key: 'page',
-        value: page
-      })
+      this.$store.dispatch('feed/update', { key: 'page', value: page })
     },
     getHref(page) {
       return this.path + (page > 1 ? '?page=' + page : '') + (this.filters ? '&filters=' + this.filters : '')
