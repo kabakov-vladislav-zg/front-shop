@@ -1,3 +1,5 @@
+import qs from 'qs'
+
 export default {
   async init({ commit, dispatch }) {
     let { query, params } = this.$router.history.current
@@ -16,21 +18,20 @@ export default {
       dispatch('getCategory'),
       dispatch('getProducts')
     ])
-
-    return true
   },
 
-  async update({ commit, dispatch }, { key, value }) {
-    commit('set', { key, value })
-    let page = key === 'page' ? value : 1
+  async update({ commit, dispatch }, { page = 1, qualities = null, sort = null }) {
     commit('set', { key: 'page', value: page })
     commit('set', { key: 'start', value: page })
     commit('set', { key: 'end', value: page })
 
+    if (qualities) commit('set', { key: 'qualities', value: qualities })
+    if (sort) commit('set', { key: 'sort', value: sort })
+
     await dispatch('getProducts')
 
     dispatch('setHistory')
-    dispatch('pushPage')
+    dispatch('unshiftPage')
 
     window.scrollTo(0,0)
   },

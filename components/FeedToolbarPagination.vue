@@ -2,7 +2,7 @@
   <div class="pagination">
     <a
       v-for="page in pageCount"
-      :key="page + path"
+      :key="path + page"
       @click.prevent="setPage(page)"
       :href="getHref(page)"
 
@@ -19,30 +19,45 @@
 </template>
 
 <script>
+import qs from 'qs'
+
 export default {
   name: "FeedToolbarPagination",
 
   computed: {
     currentPage() {
-      return Number(this.$route.query.page) || 1
+      return this.$store.state.feed.page
     },
     path() {
       return this.$route.path
     },
-    filters() {
-      return this.$route.query.filters
-    },
     pageCount() {
       return this.$store.state.feed.pageCount
+    },
+    query() {
+      let qualities = this.$store.state.feed.qualities
+      let sort = this.$store.state.feed.sort
+
+      let query = {}
+      if (qualities) query.qualities = qualities
+      if (sort !== 'updatedAt:desc') query.sort = sort
+      return Object.keys(query).length ? qs.stringify(query) : ''
     }
   },
 
   methods: {
     setPage(page) {
-      this.$store.dispatch('feed/update', { key: 'page', value: page })
+      this.$store.dispatch('feed/update', { page: page })
     },
     getHref(page) {
-      return this.path + (page > 1 ? '?page=' + page : '') + (this.filters ? '&filters=' + this.filters : '')
+      let href = this.path
+      if (page > 1) {
+        href += `?page=${page}`
+        if (this.query) href += '&' + this.query
+      } else {
+        if (this.query) href += '?' + this.query
+      }
+      return href
     }
   }
 }

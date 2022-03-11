@@ -21,7 +21,7 @@ export default {
         return this.$store.state.feed.sort
       },
       set(value) {
-        this.$store.dispatch('feed/update', { key: 'sort', value })
+        this.$store.dispatch('feed/update', { sort: value })
       }
     }
   }

@@ -34,7 +34,6 @@ export default {
 
   async asyncData({ store }) {
     await store.dispatch('feed/init')
-    return {}
   },
 
   computed: {

@@ -12,18 +12,12 @@ export default {
 
   mounted() {
     let top = new IntersectionObserver((e) => {
-      console.log('top', e[0].isIntersecting)
-      if(e[0].isIntersecting) {
-        this.$store.dispatch('feed/unshiftPage')
-      }
+      if(e[0].isIntersecting) this.$store.dispatch('feed/unshiftPage')
     }, { rootMargin: '1000px' })
     top.observe(this.$refs.top)
 
     let bottom = new IntersectionObserver((e) => {
-      console.log('bottom', e[0].isIntersecting)
-      if(e[0].isIntersecting) {
-        this.$store.dispatch('feed/pushPage')
-      }
+      if(e[0].isIntersecting) this.$store.dispatch('feed/pushPage')
     }, { rootMargin: '1000px' })
     bottom.observe(this.$refs.bottom)
   }
