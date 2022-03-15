@@ -3,13 +3,26 @@
     class="menu-filter"
     @input="setFilters"
   >
+    <button
+      @click="rebut"
+      class="btn btn-dark float-end"
+    >
+      сбросить
+    </button>
     <h2 class="text-light">Фильтры</h2>
 
-    <div class="text-light">Найдено товаров: {{count}}</div>
+    <div class="text-light">Найдено товаров: {{ count }}</div>
 
     <MenuFilterQualities
       v-model="qualities"
     />
+
+    <button
+      @click="update"
+      class="btn btn-dark"
+    >
+      применить
+    </button>
   </div>
 </template>
 
@@ -22,11 +35,19 @@ export default {
     return {
       count: 0,
 
-      qualities: null
+      qualities: {}
     }
   },
 
   methods: {
+    update() {
+      this.$store.dispatch('feed/update', { qualities: this.qualities })
+      this.$emit('close')
+    },
+    rebut() {
+      this.qualities = {}
+      this.setFilters()
+    },
     async setFilters() {
       let products = await this.$api.getProductsMeta({
         category: this.$route.params.category,
@@ -37,9 +58,7 @@ export default {
   },
 
   created() {
-    let { qualities } = this.$route.query
-    this.qualities = JSON.parse(qualities || '{}')
-
+    this.qualities = this.$store.state.feed.qualities || {}
     this.setFilters()
   }
 }

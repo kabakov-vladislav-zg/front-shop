@@ -29,10 +29,10 @@ export default {
 
   methods: {
     isSelected(key, value) {
-      return this.qualities && this.qualities[key] === value
+      return this.qualities[key] === value
     },
     setQualities(key, value) {
-      let qualities = JSON.parse(JSON.stringify(this.qualities || {}))
+      let qualities = JSON.parse(JSON.stringify(this.qualities))
       if(value === 'null') {
         delete qualities[key]
       } else {

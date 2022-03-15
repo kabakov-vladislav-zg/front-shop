@@ -1,5 +1,3 @@
-import qs from 'qs'
-
 export default {
   async init({ commit, dispatch }) {
     let { query, params } = this.$router.history.current
@@ -8,7 +6,7 @@ export default {
     commit('set', { key: 'page', value: page })
     commit('set', { key: 'start', value: page })
     commit('set', { key: 'end', value: page })
-    commit('set', { key: 'qualities', value: query.qualities ? JSON.parse(query.qualities) : null })
+    commit('set', { key: 'qualities', value: JSON.parse(query.qualities || '{}') })
     commit('set', { key: 'category', value: params.category })
     if (query.sort) {
       commit('set', { key: 'sort', value: query.sort })
@@ -96,18 +94,18 @@ export default {
 
   setHistory({ state }) {
     let { page, qualities, sort } = state
-    if (qualities) qualities = JSON.stringify(qualities)
+    qualities = JSON.stringify(qualities)
     let current = this.$router.history.current.query
 
     if (
-      qualities === (current.qualities || null)
+      qualities === (current.qualities || '{}')
       && page === (Number(current.page) || 1)
       && sort === (current.sort || 'updatedAt:desc')
     ) return
 
     let query = {}
     if(page > 1) query.page = page
-    if(qualities) query.qualities = qualities
+    if(qualities !== '{}') query.qualities = qualities
     if(sort !== 'updatedAt:desc') query.sort = sort
 
     this.$router.replace({ query })
